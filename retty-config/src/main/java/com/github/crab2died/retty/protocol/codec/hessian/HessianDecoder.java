@@ -32,5 +32,6 @@ public class HessianDecoder extends LengthFieldBasedFrameDecoder {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 
         ctx.close();
+        cause.printStackTrace();
     }
 }

@@ -1,7 +1,8 @@
-package com.github.crab2died.retty.proxy;
+package com.github.crab2died.retty.rpc.proxy;
 
-import com.github.crab2died.retty.context.RettyContext;
+import com.github.crab2died.retty.future.RettyFuture;
 import com.github.crab2died.retty.protocol.RettyRequest;
+import com.github.crab2died.retty.rpc.client.ClientFuture;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -11,13 +12,8 @@ import java.util.UUID;
 @SuppressWarnings("all")
 public class DefaultRettyProxy implements InvocationHandler, RettyProxy {
 
-    private RettyContext rettyContext;
 
-    private DefaultRettyProxy() {
-    }
-
-    public DefaultRettyProxy(RettyContext rettyContext) {
-        this.rettyContext = rettyContext;
+    public DefaultRettyProxy() {
     }
 
     @Override
@@ -25,7 +21,7 @@ public class DefaultRettyProxy implements InvocationHandler, RettyProxy {
         return (T) Proxy.newProxyInstance(
                 interfaceClass.getClassLoader(),
                 new Class[]{interfaceClass},
-                new DefaultRettyProxy(this.rettyContext)
+                new DefaultRettyProxy()
         );
     }
 
@@ -40,6 +36,8 @@ public class DefaultRettyProxy implements InvocationHandler, RettyProxy {
         req.setMethodType(method.getParameterTypes());
         req.setParameters(args);
 
-        return MethodInvoke.invoke(req);
+        RettyFuture future = ClientFuture.get().request(req);
+
+        return future.get();
     }
 }

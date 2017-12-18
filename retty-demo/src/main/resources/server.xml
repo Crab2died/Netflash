@@ -15,8 +15,4 @@
         <constructor-arg name="serverAddress" value="127.0.0.1:8200"/>
     </bean>
 
-    <bean id="client" class="com.github.crab2died.retty.rpc.client.RettyClient">
-        <constructor-arg name="serverAddress" value="127.0.0.1:8200"/>
-    </bean>
-
 </beans>

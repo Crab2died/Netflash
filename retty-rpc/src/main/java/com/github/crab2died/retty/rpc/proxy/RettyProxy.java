@@ -1,4 +1,4 @@
-package com.github.crab2died.retty.proxy;
+package com.github.crab2died.retty.rpc.proxy;
 
 /**
  *  Retty底层代理接口

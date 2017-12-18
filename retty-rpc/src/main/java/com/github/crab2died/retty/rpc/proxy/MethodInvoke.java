@@ -1,4 +1,4 @@
-package com.github.crab2died.retty.proxy;
+package com.github.crab2died.retty.rpc.proxy;
 
 import com.github.crab2died.retty.context.RettyContextCache;
 import com.github.crab2died.retty.protocol.RettyRequest;

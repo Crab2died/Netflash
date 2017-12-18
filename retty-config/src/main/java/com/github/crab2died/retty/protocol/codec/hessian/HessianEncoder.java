@@ -26,5 +26,6 @@ public class HessianEncoder extends MessageToMessageEncoder<RettyRequest> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 
         ctx.close();
+        cause.printStackTrace();
     }
 }

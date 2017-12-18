@@ -1,8 +1,8 @@
 package proxy;
 
 import com.github.crab2died.retty.context.RettyContext;
-import com.github.crab2died.retty.proxy.DefaultRettyProxy;
 import com.github.crab2died.retty.demo.service.DemoService;
+import com.github.crab2died.retty.rpc.proxy.DefaultRettyProxy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,13 @@ public class ProxyTest {
     @Test
     public void test(){
 
-        DemoService demoService = new DefaultRettyProxy(springRettyContextInit).instance(DemoService.class);
+        DemoService demoService = new DefaultRettyProxy().instance(DemoService.class);
         demoService.test();
+
+    }
+
+    @Test
+    public void server(){
 
     }
 
