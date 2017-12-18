@@ -1,3 +1,5 @@
+package com.github.crab2died;
+
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;

@@ -1,4 +1,4 @@
-package proxy;
+package com.github.crab2died.proxy;
 
 public interface HelloWorld {
 

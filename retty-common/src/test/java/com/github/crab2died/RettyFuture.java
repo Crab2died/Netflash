@@ -1,3 +1,5 @@
+package com.github.crab2died;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
