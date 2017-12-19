@@ -12,14 +12,25 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class RequestHandler extends SimpleChannelInboundHandler<RettyRequest> {
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, RettyRequest req) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ctx.close();
+        cause.printStackTrace();
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, RettyRequest req) throws
+            Exception {
 
         System.out.println(req);
+//        RettyResponse resp = new RettyResponse();
+//        resp.setRequestId(req.getRequestId());
+//        ctx.channel().writeAndFlush(resp);
         RettyServer.submit(new Runnable() {
             @Override
             public void run() {
                 RettyResponse resp = MethodInvoke.invoke(req);
-                ctx.writeAndFlush(resp).addListener(new ChannelFutureListener() {
+                resp.setRequestId(req.getRequestId());
+                ctx.channel().writeAndFlush(resp).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
                         System.out.println("请求:" + req + " => " + resp);
@@ -27,11 +38,5 @@ public class RequestHandler extends SimpleChannelInboundHandler<RettyRequest> {
                 });
             }
         });
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        ctx.close();
-        cause.printStackTrace();
     }
 }

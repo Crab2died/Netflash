@@ -1,11 +1,10 @@
 package com.github.crab2died.retty.rpc.client;
 
-import com.github.crab2died.retty.protocol.codec.hessian.HessianDecoder;
 import com.github.crab2died.retty.protocol.codec.hessian.HessianEncoder;
+import com.github.crab2died.retty.protocol.codec.hessian.HessianResponseDecoder;
 import com.github.crab2died.retty.rpc.handler.ResponseHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -14,12 +13,11 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-
 public class RettyClient implements Client {
 
     private String serverAddress = "127.0.0.1:8200";
 
-    private ChannelFuture future;
+    private static SocketChannel socketChannel;
 
     public RettyClient(String serverAddress) {
         this.serverAddress = serverAddress;
@@ -38,23 +36,20 @@ public class RettyClient implements Client {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
-                                    .addLast("decoder", new HessianDecoder(1024 * 1024, 0, 2, 0, 2))
+                                    .addLast("decoder", new HessianResponseDecoder(1024 * 1024, 0, 2, 0, 2))
                                     .addLast("encoder", new HessianEncoder())
                                     .addLast("response", new ResponseHandler());
                         }
                     });
             String[] str = this.serverAddress.split(":");
-            future = client.connect(str[0], Integer.parseInt(str[1])).sync();
-            future.addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    ClientFuture.set(future.channel().pipeline().get(ResponseHandler.class));
-                    System.out.println("client 启动成功");
-                }
-            });
-           // future.channel().closeFuture().sync();
+            ChannelFuture future = client.connect(str[0], Integer.parseInt(str[1])).sync();
+            if (future.isSuccess()) {
+                System.out.println("client 启动成功");
+                socketChannel = (SocketChannel) future.channel();
+            }
+            future.channel().closeFuture().sync();
         } finally {
-            group.shutdownGracefully();
+             group.shutdownGracefully();
         }
     }
 
@@ -62,4 +57,9 @@ public class RettyClient implements Client {
     public void disConnect() {
         //
     }
+
+    public static SocketChannel getSocketChannel() {
+        return socketChannel;
+    }
+
 }

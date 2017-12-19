@@ -8,11 +8,11 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.util.List;
 
-public class HessianEncoder extends MessageToMessageEncoder<RettyRequest> {
+public class HessianEncoder extends MessageToMessageEncoder<Object> {
 
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, RettyRequest req, List<Object> out)
+    protected void encode(ChannelHandlerContext ctx, Object req, List<Object> out)
             throws Exception {
 
         ByteBuf buf = Unpooled.buffer();

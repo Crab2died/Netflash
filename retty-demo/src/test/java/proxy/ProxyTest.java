@@ -19,8 +19,8 @@ public class ProxyTest {
     @Test
     public void test(){
 
-        DemoService demoService = new DefaultRettyProxy().instance(DemoService.class);
-        demoService.test();
+     //   DemoService demoService = new DefaultRettyProxy().instance(DemoService.class);
+     //   demoService.test();
 
     }
 

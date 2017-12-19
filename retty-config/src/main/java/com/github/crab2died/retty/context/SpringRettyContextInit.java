@@ -29,8 +29,10 @@ public class SpringRettyContextInit implements ApplicationContextAware, RettyCon
                 }
             }
         }
-
-        System.out.println("注册的services:" + RettyContextCache.RETTY_CONTEXT);
+        System.out.println("注册services:");
+        for (Map.Entry entry : RettyContextCache.RETTY_CONTEXT.entrySet()){
+            System.out.println(entry.getKey() + " => " + entry.getValue());
+        }
     }
 
     /**

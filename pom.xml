@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <springframework.version>4.3.2.RELEASE</springframework.version>
         <cglib.version>3.2.5</cglib.version>
-        <netty.version>5.0.0.Alpha2</netty.version>
+        <netty.version>4.1.16.Final</netty.version>
         <hessan.version>4.0.38</hessan.version>
         <logback.version>1.1.7</logback.version>
         <jansi.version>1.8</jansi.version>

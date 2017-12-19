@@ -14,7 +14,7 @@ public class MethodInvoke {
         RettyResponse resp = new RettyResponse();
         resp.setRequestId(req.getRequestId());
         try {
-            Object bean = RettyContextCache.RETTY_CONTEXT.get(req.getMethodName());
+            Object bean = RettyContextCache.RETTY_CONTEXT.get(req.getInterfaceName());
             String methodName = req.getMethodName();
             Class<?>[] parameterTypes = req.getMethodType();
 
@@ -29,7 +29,7 @@ public class MethodInvoke {
                 throw new NoSuchMethodException("An implementation method is not found");
             }
 
-            implMethod.invoke(bean, req.getParameters());
+            resp.setResponse(implMethod.invoke(bean, req.getParameters()));
         } catch (Throwable t) {
             resp.setErr(-1);
             resp.setDesc(t.getMessage());

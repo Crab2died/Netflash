@@ -1,8 +1,9 @@
 package com.github.crab2died.retty.protocol;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class RettyRequest {
+public class RettyRequest implements Serializable{
 
     private String requestId;
 

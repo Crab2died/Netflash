@@ -40,21 +40,30 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2.1</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <finalName>retty-all-${project.parent.version}</finalName>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <createSourcesJar>false</createSourcesJar>
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.github.crab2died:retty-common</include>
+                                    <include>com.github.crab2died:retty-config</include>
+                                    <include>com.github.crab2died:retty-proxy</include>
+                                    <include>com.github.crab2died:retty-rpc</include>
+                                </includes>
+                            </artifactSet>
+                            <transformers>
+
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
