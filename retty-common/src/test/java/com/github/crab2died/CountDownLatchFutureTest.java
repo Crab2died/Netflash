@@ -28,7 +28,7 @@ public class CountDownLatchFutureTest {
             }).start();
         }
         try {
-            countDownLatch.await(15L, TimeUnit.SECONDS);
+            countDownLatch.await(1L, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
