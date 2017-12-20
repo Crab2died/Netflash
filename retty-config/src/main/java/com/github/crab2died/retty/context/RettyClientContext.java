@@ -119,12 +119,6 @@ public class RettyClientContext implements ApplicationContextAware, BeanFactoryP
                 }
             }
         }
-        if (logger.isEnabled(InternalLogLevel.INFO)) {
-            logger.info("Initialized apis:");
-            for (Map.Entry entry : RettyContextCache.RETTY_API_CONTEXT.entrySet()) {
-                logger.info(entry.getKey() + " => " + entry.getValue());
-            }
-        }
     }
 
     @Override
@@ -175,6 +169,12 @@ public class RettyClientContext implements ApplicationContextAware, BeanFactoryP
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (logger.isEnabled(InternalLogLevel.INFO)) {
+            logger.info("Initialized apis:");
+            for (Map.Entry entry : RettyContextCache.RETTY_API_CONTEXT.entrySet()) {
+                logger.info(entry.getKey() + " => " + entry.getValue());
+            }
         }
     }
 }
