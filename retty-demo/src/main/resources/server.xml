@@ -7,12 +7,40 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.github.crab2died"/>
+    <!--<context:component-scan base-package="com.github.crab2died"/>-->
 
-    <bean id="springRettyContextInit" class="com.github.crab2died.retty.context.SpringRettyContextInit"/>
+    <!--<bean id="springRettyContextInit" class="com.github.crab2died.retty.context.SpringRettyContextInit"/>-->
 
     <bean id="server" class="com.github.crab2died.retty.rpc.server.RettyServer">
         <constructor-arg name="serverAddress" value="127.0.0.1:8200"/>
+    </bean>
+
+    <!-- 协议配置 -->
+    <bean id="protocol" class="com.github.crab2died.retty.context.Protocol">
+        <!-- 协议名,默认协议:retty -->
+        <constructor-arg name="name" value="retty"/>
+        <!-- 端口号 -->
+        <constructor-arg name="port" value="4321"/>
+    </bean>
+
+    <!-- 业务实现类，可以通过注解@RettyService，然后启动spring注解扫描功能 -->
+    <!--<bean name="demo" class="com.github.crab2died.retty.demo.service.impl.DemoServiceImpl"/>-->
+
+    <bean id="rettyServerContext" class="com.github.crab2died.retty.context.RettyServerContext">
+        <!-- 服务名 -->
+        <property name="name" value="server"/>
+        <!-- 注册中心 -->
+        <property name="registry" value="127.0.0.1:2181"/>
+        <!-- 协议配置 -->
+        <property name="protocol" ref="protocol"/>
+        <!-- 业务服务列表 -->
+        <!--<property name="services">-->
+            <!--<list>-->
+                <!--<ref bean="demo"/>-->
+            <!--</list>-->
+        <!--</property>-->
+        <!-- 扫描包 -->
+        <property name="scanPackage" value="com.github.crab2died.retty.demo.*"/>
     </bean>
 
 </beans>

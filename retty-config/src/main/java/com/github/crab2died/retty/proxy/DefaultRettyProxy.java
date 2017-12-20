@@ -1,11 +1,9 @@
-package com.github.crab2died.retty.rpc.proxy;
+package com.github.crab2died.retty.proxy;
 
 import com.github.crab2died.retty.client.ClientUtil;
 import com.github.crab2died.retty.future.RettyFuture;
 import com.github.crab2died.retty.protocol.RettyRequest;
 import com.github.crab2died.retty.resp.SynResp;
-import com.github.crab2died.retty.rpc.client.RettyClient;
-import com.github.crab2died.retty.rpc.handler.ResponseHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.socket.SocketChannel;

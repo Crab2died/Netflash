@@ -7,12 +7,26 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.github.crab2died"/>
-
-    <bean id="springRettyContextInit" class="com.github.crab2died.retty.context.SpringRettyContextInit"/>
+    <!--<context:component-scan base-package="com.github.crab2died"/>-->
 
     <bean id="client" class="com.github.crab2died.retty.rpc.client.RettyClient">
         <constructor-arg name="serverAddress" value="127.0.0.1:8200"/>
+    </bean>
+
+    <!-- 客户端配置 -->
+    <bean id="clientContext" class="com.github.crab2died.retty.context.RettyClientContext">
+        <!-- 客户端名 -->
+        <property name="name" value="client"/>
+        <!-- 注册中心 -->
+        <property name="registry" value="127.0.0.1:2181"/>
+        <!-- api列表,接口 -->
+        <property name="apiInterfaces">
+            <list>
+                <value>com.github.crab2died.retty.demo.service.DemoService</value>
+            </list>
+        </property>
+        <!-- 扫描包 -->
+        <property name="scanPackage" value="com.github.**.service"/>
     </bean>
 
 </beans>

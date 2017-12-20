@@ -3,6 +3,7 @@ package com.github.crab2died.retty.rpc.handler;
 import com.github.crab2died.retty.future.RettyFuture;
 import com.github.crab2died.retty.protocol.RettyRequest;
 import com.github.crab2died.retty.protocol.RettyResponse;
+import com.github.crab2died.retty.resp.SynResp;
 import io.netty.channel.*;
 
 import java.util.HashMap;
@@ -12,18 +13,15 @@ import java.util.concurrent.CountDownLatch;
 
 public class ResponseHandler extends SimpleChannelInboundHandler<RettyResponse> {
 
-    public static Map<String, RettyFuture> SYNC_RESPONSE = new ConcurrentHashMap<>();
-
-
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RettyResponse resp) throws
             Exception {
 
         System.out.println(resp);
         String reqId = resp.getRequestId();
-        RettyFuture future = SYNC_RESPONSE.get(reqId);
+        RettyFuture future = SynResp.SYNC_RESPONSE.get(reqId);
         if (future != null) {
-            SYNC_RESPONSE.remove(reqId);
+            SynResp.SYNC_RESPONSE.remove(reqId);
             future.done(resp);
         }
     }
@@ -40,7 +38,7 @@ public class ResponseHandler extends SimpleChannelInboundHandler<RettyResponse> 
     }
 
     public void set(RettyFuture future) {
-        SYNC_RESPONSE.put(future.getRequestId(), future);
+        SynResp.SYNC_RESPONSE.put(future.getRequestId(), future);
     }
 
 }
