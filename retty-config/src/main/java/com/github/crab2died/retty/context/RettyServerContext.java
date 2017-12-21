@@ -1,6 +1,6 @@
 package com.github.crab2died.retty.context;
 
-import com.github.crab2died.retty.scan.RettyServiceAnnotationScanner;
+import com.github.crab2died.retty.common.support.scanner.ClassAnnotationScanner;
 import com.github.crab2died.retty.anntotaion.RettyService;
 import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
@@ -129,14 +129,14 @@ public class RettyServerContext implements ApplicationContextAware, BeanFactoryP
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
         // 使用自定义扫描类，针对@TestModel进行扫描
-        RettyServiceAnnotationScanner scanner = RettyServiceAnnotationScanner.getScanner(
+        ClassAnnotationScanner scanner = ClassAnnotationScanner.getScanner(
                 (BeanDefinitionRegistry) beanFactory,
                 RettyService.class
         );
         // 设置ApplicationContext
         scanner.setResourceLoader(this.applicationContext);
         // 执行扫描
-        int count = scanner.scan(this.scanPackage);
+        scanner.scan(this.scanPackage);
 
         // 取得对应Annotation映射，BeanName -- 实例
         Map<String, Object> annotations = beanFactory.getBeansWithAnnotation(RettyService.class);

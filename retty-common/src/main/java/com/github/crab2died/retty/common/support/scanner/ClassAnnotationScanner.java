@@ -1,17 +1,15 @@
-package com.github.crab2died.retty.scan;
+package com.github.crab2died.retty.common.support.scanner;
 
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.core.io.Resource;
-import org.springframework.core.type.classreading.MetadataReaderFactory;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-public class RettyApiAnnotationScanner extends ClassPathBeanDefinitionScanner {
+public class ClassAnnotationScanner extends ClassPathBeanDefinitionScanner {
 
     /**
      * 实体类对应的AnnotationClazz
@@ -26,14 +24,15 @@ public class RettyApiAnnotationScanner extends ClassPathBeanDefinitionScanner {
     /**
      * 因构造函数无法传入指定的Annotation类，需使用静态方法来调用
      */
-    public static synchronized RettyApiAnnotationScanner getScanner(BeanDefinitionRegistry registry, Class<? extends Annotation> clazz){
+    public static synchronized ClassAnnotationScanner getScanner(BeanDefinitionRegistry registry, Class<? extends
+            Annotation> clazz) {
         staticTempAnnotationClazz = clazz;
-        RettyApiAnnotationScanner scanner = new RettyApiAnnotationScanner(registry);
+        ClassAnnotationScanner scanner = new ClassAnnotationScanner(registry);
         scanner.setSelfAnnotationClazz(clazz);
         return scanner;
     }
 
-    private RettyApiAnnotationScanner(BeanDefinitionRegistry registry) {
+    private ClassAnnotationScanner(BeanDefinitionRegistry registry) {
         super(registry);
     }
 
@@ -69,16 +68,6 @@ public class RettyApiAnnotationScanner extends ClassPathBeanDefinitionScanner {
     }
 
     public static void setStaticTempAnnotationClazz(Class<? extends Annotation> staticTempAnnotationClazz) {
-        RettyApiAnnotationScanner.staticTempAnnotationClazz = staticTempAnnotationClazz;
-    }
-
-    @Override
-    public Resource[] getResources(String basePackage) throws IOException {
-        return super.getResources(basePackage);
-    }
-
-    @Override
-    public MetadataReaderFactory getMetadataReaderFactory() {
-        return super.getMetadataReaderFactory();
+        ClassAnnotationScanner.staticTempAnnotationClazz = staticTempAnnotationClazz;
     }
 }

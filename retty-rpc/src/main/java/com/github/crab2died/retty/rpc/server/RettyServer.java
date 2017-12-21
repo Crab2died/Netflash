@@ -1,6 +1,6 @@
 package com.github.crab2died.retty.rpc.server;
 
-import com.github.crab2died.retty.protocol.codec.hessian.HessianDecoder;
+import com.github.crab2died.retty.protocol.codec.hessian.HessianRequestDecoder;
 import com.github.crab2died.retty.protocol.codec.hessian.HessianEncoder;
 import com.github.crab2died.retty.rpc.handler.RequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -49,7 +49,7 @@ public class RettyServer implements Server {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
-                                    .addLast("decoder", new HessianDecoder(1024 * 1024, 0, 2, 0, 2))
+                                    .addLast("decoder", new HessianRequestDecoder(1024 * 1024, 0, 2, 0, 2))
                                     .addLast("encoder", new HessianEncoder())
                                     .addLast("request", new RequestHandler());
                         }

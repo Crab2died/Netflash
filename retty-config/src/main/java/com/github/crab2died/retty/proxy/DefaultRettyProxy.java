@@ -43,7 +43,7 @@ public class DefaultRettyProxy implements InvocationHandler {
         return future.get();
     }
 
-    public RettyFuture request(RettyRequest req, SocketChannel socketChannel) {
+    public RettyFuture request(RettyRequest req, SocketChannel socketChannel) throws Throwable{
 
         final CountDownLatch latch = new CountDownLatch(1);
         RettyFuture future = new RettyFuture(req.getRequestId());
@@ -54,12 +54,7 @@ public class DefaultRettyProxy implements InvocationHandler {
                 latch.countDown();
             }
         });
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        latch.await();
         return future;
-
     }
 }

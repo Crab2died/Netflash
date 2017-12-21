@@ -1,14 +1,9 @@
 package com.github.crab2died.retty;
 
 import com.github.crab2died.retty.demo.service.DemoService;
-import com.github.crab2died.retty.protocol.RettyRequest;
 import com.github.crab2died.retty.rpc.client.RettyClient;
-import com.github.crab2died.retty.rpc.proxy.ProxyUtils;
-import io.netty.channel.socket.SocketChannel;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +27,7 @@ public class Client {
         }).start();
         latch.await(4, TimeUnit.SECONDS);
 
-        for (int i = 0; i < 10000; i++){
+        for (int i = 0; i < 100; i++){
             final int fi = i;
             new Thread(new Runnable() {
                 @Override

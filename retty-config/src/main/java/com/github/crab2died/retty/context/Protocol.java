@@ -3,7 +3,7 @@ package com.github.crab2died.retty.context;
 /**
  * 服务协议配置
  *
- * @author : wbhe2
+ * @author : Crab2Died
  * 2017/12/20  14:46:12
  */
 public class Protocol {

@@ -4,12 +4,18 @@ import com.github.crab2died.retty.protocol.RettyRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 
-public class HessianDecoder extends LengthFieldBasedFrameDecoder {
+public class HessianRequestDecoder extends LengthFieldBasedFrameDecoder {
 
-    public HessianDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength,
-                          int lengthAdjustment, int initialBytesToStrip) {
-        super(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, initialBytesToStrip);
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(HessianRequestDecoder.class);
+
+    public HessianRequestDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength,
+                                 int lengthAdjustment, int initialBytesToStrip) {
+
+        super(maxFrameLength, lengthFieldOffset, lengthFieldLength,
+                lengthAdjustment, initialBytesToStrip);
     }
 
     @Override
@@ -30,8 +36,9 @@ public class HessianDecoder extends LengthFieldBasedFrameDecoder {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-
         ctx.close();
-        cause.printStackTrace();
+        if (logger.isErrorEnabled()){
+            logger.error("Hessian decoder handler process error, " + cause);
+        }
     }
 }

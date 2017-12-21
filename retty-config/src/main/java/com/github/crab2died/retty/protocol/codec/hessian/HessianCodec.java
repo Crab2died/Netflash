@@ -2,6 +2,8 @@ package com.github.crab2died.retty.protocol.codec.hessian;
 
 import com.caucho.hessian.io.HessianInput;
 import com.caucho.hessian.io.HessianOutput;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +18,8 @@ import java.io.IOException;
 @SuppressWarnings("all")
 public class HessianCodec {
 
+    private static final InternalLogger logger = InternalLoggerFactory.getInstance(HessianCodec.class);
+
     public static byte[] encode(Object obj) throws IOException {
 
         HessianOutput ho = null;
@@ -24,6 +28,9 @@ public class HessianCodec {
             ho = new HessianOutput(baos);
             ho.writeObject(obj);
             baos.flush();
+            if (logger.isTraceEnabled()){
+                logger.trace("Hessian encode : " + obj);
+            }
             return baos.toByteArray();
         } finally {
             if (ho != null) {
@@ -38,7 +45,11 @@ public class HessianCodec {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
 
             hi = new HessianInput(bais);
-            return (T) hi.readObject(clazz);
+            T obj = (T) hi.readObject(clazz);
+            if (logger.isTraceEnabled()){
+                logger.trace("Hessian decode : " + obj);
+            }
+            return obj;
         } finally {
             if (hi != null) {
                 hi.close();

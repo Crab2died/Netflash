@@ -1,30 +1,25 @@
 package com.github.crab2died.retty.context;
 
 import com.github.crab2died.retty.anntotaion.RettyApi;
-import com.github.crab2died.retty.anntotaion.RettyService;
 import com.github.crab2died.retty.proxy.ProxyUtils;
-import com.github.crab2died.retty.scan.RettyApiAnnotationScanner;
+import com.github.crab2died.retty.common.support.scanner.InterfaceAnnotationScanner;
 import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.Resource;
-import org.springframework.core.type.ClassMetadata;
-import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 
-import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 客户端Context配置
  *
- * @author : wbhe2
+ * @author : Crab2Died
  * 2017/12/20  14:46:58
  */
 public class RettyClientContext implements ApplicationContextAware, BeanFactoryPostProcessor {
@@ -127,48 +122,28 @@ public class RettyClientContext implements ApplicationContextAware, BeanFactoryP
         DefaultListableBeanFactory fcy = (DefaultListableBeanFactory) applicationContext
                 .getAutowireCapableBeanFactory();
 
-        RettyApiAnnotationScanner scanner1 = RettyApiAnnotationScanner.getScanner(
-                (BeanDefinitionRegistry) beanFactory,
-                RettyService.class
-        );
-        // 设置ApplicationContext
-        scanner1.setResourceLoader(this.applicationContext);
-        // 执行扫描
-        scanner1.scan(this.scanPackage);
-        try {
-            Resource[] resources = scanner1.getResources(this.scanPackage);
-            CachingMetadataReaderFactory metadataReaderFactory = (CachingMetadataReaderFactory)
-                    scanner1.getMetadataReaderFactory();
+        Set<Class> set = InterfaceAnnotationScanner.findPackageAnnotationClass(this.scanPackage, RettyApi.class);
 
-            for (Resource resource : resources) {
-                ClassMetadata obj = metadataReaderFactory.getMetadataReader(resource).getClassMetadata();
+        if (null != set && !set.isEmpty()) {
+            for (Class<?> clazz : set) {
+
+                String simpleName = clazz.getSimpleName();
+                String beanName = simpleName.replaceFirst(
+                        simpleName.substring(0, 1),
+                        simpleName.substring(0, 1).toLowerCase()
+                );
+                Object proxyObj = ProxyUtils.instance(clazz);
+                Object bean = null;
                 try {
-                    Class<?> clazz = Class.forName(obj.getClassName());
-                    if (clazz.isInterface() && !clazz.isAnnotation() && clazz.getAnnotation(RettyApi.class) != null) {
-
-                        String simpleName = clazz.getSimpleName();
-                        String beanName = simpleName.replaceFirst(
-                                simpleName.substring(0, 1),
-                                simpleName.substring(0, 1).toLowerCase()
-                        );
-                        Object proxyObj = ProxyUtils.instance(clazz);
-                        Object bean = null;
-                        try {
-                            bean = applicationContext.getBean(beanName);
-                        } catch (Exception e) {
-                            // do nothing
-                        }
-                        if (bean == null) {
-                            fcy.registerSingleton(beanName, proxyObj);
-                            RettyContextCache.RETTY_API_CONTEXT.put(beanName, proxyObj);
-                        }
-                    }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    bean = applicationContext.getBean(beanName);
+                } catch (Exception e) {
+                    // do nothing
+                }
+                if (bean == null) {
+                    fcy.registerSingleton(beanName, proxyObj);
+                    RettyContextCache.RETTY_API_CONTEXT.put(beanName, proxyObj);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         if (logger.isEnabled(InternalLogLevel.INFO)) {
             logger.info("Initialized apis:");

@@ -2,7 +2,7 @@ package com.github.crab2died.retty.rpc.handler;
 
 import com.github.crab2died.retty.protocol.RettyRequest;
 import com.github.crab2died.retty.protocol.RettyResponse;
-import com.github.crab2died.retty.rpc.proxy.MethodInvoke;
+import com.github.crab2died.retty.proxy.MethodInvoke;
 import com.github.crab2died.retty.rpc.server.RettyServer;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
