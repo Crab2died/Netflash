@@ -7,6 +7,7 @@ import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -22,7 +23,7 @@ import java.util.Set;
  * @author : Crab2Died
  * 2017/12/20  14:46:58
  */
-public class RettyClientContext implements ApplicationContextAware, BeanFactoryPostProcessor {
+public class RettyClientContext implements ApplicationContextAware, BeanFactoryPostProcessor, InitializingBean {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(RettyClientContext.class);
 
@@ -151,5 +152,17 @@ public class RettyClientContext implements ApplicationContextAware, BeanFactoryP
                 logger.info(entry.getKey() + " => " + entry.getValue());
             }
         }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // spring 加载完成后处理
+        // 1) 同步注册中心注册服务
+
+        // 2) 连接TCP
+
+
+        // 3) 监听服务变化
+
     }
 }
