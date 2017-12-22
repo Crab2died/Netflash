@@ -192,19 +192,26 @@ public class RettyServerContext implements ApplicationContextAware, BeanFactoryP
         ZkClient zkClient = new ZkClient(registry, 5000, 5000, new ZkClientUtils.MyZkSerializer());
         zkClient.createPersistent(REGISTRY_SERVICE_NODE, true);
 
-        Set<String> set = new HashSet<>();
         for (Map.Entry<String, URL> entry : RETTY_SERVICE_CONTEXT.entrySet()) {
-            set.add(entry.getValue().encode());
+
+            String servicesNode = REGISTRY_SERVICE_NODE + "/" + entry.getKey();
+            zkClient.createEphemeralSequential(servicesNode, entry.getValue().encode());
         }
-        if (zkClient.exists(REGISTRY_SERVICE_NODE)) {
-            String store = zkClient.readData(REGISTRY_SERVICE_NODE);
-            if (null != store && !"[]".equals(store)) {
-                set.addAll(JSONArray.parseArray(store, String.class));
-            }
-        }
-        if (!set.isEmpty()) {
-            ZkClientUtils.initNode(zkClient, REGISTRY_SERVICE_NODE, set);
-        }
+//
+//
+//        Set<String> set = new HashSet<>();
+//        for (Map.Entry<String, URL> entry : RETTY_SERVICE_CONTEXT.entrySet()) {
+//            set.add(entry.getValue().encode());
+//        }
+//        if (zkClient.exists(REGISTRY_SERVICE_NODE)) {
+//            String store = zkClient.readData(REGISTRY_SERVICE_NODE);
+//            if (null != store && !"[]".equals(store)) {
+//                set.addAll(JSONArray.parseArray(store, String.class));
+//            }
+//        }
+//        if (!set.isEmpty()) {
+//            ZkClientUtils.initNode(zkClient, REGISTRY_SERVICE_NODE, set);
+//        }
 
         String str = zkClient.readData(REGISTRY_SERVICE_NODE);
         System.out.println(str);
