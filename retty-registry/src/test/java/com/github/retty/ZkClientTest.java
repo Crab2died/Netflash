@@ -1,5 +1,6 @@
 package com.github.retty;
 
+import com.alibaba.fastjson.JSONArray;
 import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.exception.ZkMarshallingError;
@@ -9,6 +10,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ZkClientTest {
 
@@ -38,11 +41,31 @@ public class ZkClientTest {
     @Test
     public void testZkClient() {
         String server = "localhost:2181,127.0.0.1:2181";
-        final String zkNode = "/goblin/web";
+        List<String> servers = new ArrayList<>();
+        servers.add("127.0.0.1:4321");
+        servers.add("localhost:4321");
+        List<String> services = new ArrayList<>();
+        services.add("URL:127.0.0.1:4321:com.github.crab2died.retty.demo.service.impl.DemoServiceImpl[]{100}");
+        services.add("URL:localhost:4321:com.github.crab2died.retty.demo.service.impl.DemoServiceImpl[v1.0]{100}");
+
+        final String serviceNode = "/retty/registry/service";
+        final String serverNode = "/retty/registry/server";
+
         ZkClient zkClient = new ZkClient(server, 5000, 5000, new MyZkSerializer());
-        zkClient.createPersistent("/goblin", true);
-        zkClient.create(zkNode, "{\"user\":\"root\"}", CreateMode.PERSISTENT);
-        zkClient.subscribeDataChanges(zkNode, new IZkDataListener() {
+        zkClient.createPersistent("/retty/registry", true);
+
+        // server node
+        if (!zkClient.exists(serverNode)) {
+            zkClient.create(serverNode, JSONArray.toJSONString(servers), CreateMode.PERSISTENT);
+        } else {
+            String existsServer = zkClient.readData(serverNode);
+            if (null != existsServer && !existsServer.equals("[]")){
+                servers.addAll(JSONArray.parseArray(existsServer, String.class));
+            }
+            zkClient.writeData(serverNode, JSONArray.toJSONString(servers));
+        }
+
+        zkClient.subscribeDataChanges(serverNode, new IZkDataListener() {
             @Override
             public void handleDataChange(String s, Object o) throws Exception {
                 System.out.println(String.format("%s 节点被修改:%s!", s, o));
@@ -54,14 +77,57 @@ public class ZkClientTest {
             }
         });
 
-        zkClient.writeData(zkNode, "测试");
+        // service node
+        zkClient.create(serviceNode, JSONArray.toJSONString(services), CreateMode.PERSISTENT);
 
-        //zkClient.deleteRecursive("/goblin");
+        zkClient.subscribeDataChanges(serviceNode, new IZkDataListener() {
+            @Override
+            public void handleDataChange(String s, Object o) throws Exception {
+                System.out.println(String.format("%s 节点被修改:%s!", s, o));
+            }
+
+            @Override
+            public void handleDataDeleted(String s) throws Exception {
+                System.out.println(String.format("%s 节点删除！", s));
+            }
+        });
+
 
         try {
             System.in.read();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void test(){
+        String server = "localhost:2181,127.0.0.1:2181";
+        ZkClient zkClient = new ZkClient(server, 5000, 5000, new MyZkSerializer());
+        zkClient.createPersistent("/retty/registry", true);
+        List<String> servers = new ArrayList<>();
+        servers.add("127.0.0.1:4321");
+        servers.add("localhost:4321");
+        zkClient.create("/retty/registry/service", "aa", CreateMode.EPHEMERAL_SEQUENTIAL);
+        zkClient.create("/retty/registry/service", "bb", CreateMode.EPHEMERAL_SEQUENTIAL);
+        zkClient.subscribeDataChanges("/retty/registry/service", new IZkDataListener() {
+            @Override
+            public void handleDataChange(String s, Object o) throws Exception {
+                System.out.println(String.format("%s 节点被修改:%s!", s, o));
+            }
+
+            @Override
+            public void handleDataDeleted(String s) throws Exception {
+                System.out.println(String.format("%s 节点删除！", s));
+            }
+        });
+
+       // zkClient.create("/retty/registry/service", "CC", CreateMode.EPHEMERAL_SEQUENTIAL);
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

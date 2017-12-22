@@ -10,7 +10,7 @@ public @interface RettyService {
     /**
      * 指定api接口
      */
-    Class<?> interfaceClass() default void.class;
+    Class<?> interfaceClass() default Void.class;
 
     /**
      * 权重

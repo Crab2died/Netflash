@@ -1,11 +1,15 @@
 package com.github.crab2died.retty.context;
 
+import com.alibaba.fastjson.JSONArray;
 import com.github.crab2died.retty.anntotaion.RettyApi;
+import com.github.crab2died.retty.common.ZkClientUtils;
 import com.github.crab2died.retty.proxy.ProxyUtils;
 import com.github.crab2died.retty.common.support.scanner.InterfaceAnnotationScanner;
 import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.I0Itec.zkclient.IZkDataListener;
+import org.I0Itec.zkclient.ZkClient;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -14,8 +18,14 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.github.crab2died.retty.Constant.REGISTRY_ROOT;
+import static com.github.crab2died.retty.Constant.REGISTRY_SERVER_NODE;
+import static com.github.crab2died.retty.Constant.REGISTRY_SERVICE_NODE;
 
 /**
  * 客户端Context配置
@@ -152,6 +162,8 @@ public class RettyClientContext implements ApplicationContextAware, BeanFactoryP
                 logger.info(entry.getKey() + " => " + entry.getValue());
             }
         }
+
+
     }
 
     @Override

@@ -7,6 +7,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RettyApi {
 
+    //
     String value() default "";
+
+    // 调用服务版本号
+    String version() default "";
 
 }

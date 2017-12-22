@@ -1,10 +1,14 @@
 package com.github.crab2died.retty.context;
 
-import com.github.crab2died.retty.common.support.scanner.ClassAnnotationScanner;
+import com.alibaba.fastjson.JSONArray;
 import com.github.crab2died.retty.anntotaion.RettyService;
+import com.github.crab2died.retty.common.ZkClientUtils;
+import com.github.crab2died.retty.common.support.scanner.ClassAnnotationScanner;
+import com.github.crab2died.retty.route.URL;
 import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.I0Itec.zkclient.ZkClient;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -13,7 +17,13 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import static com.github.crab2died.retty.Constant.REGISTRY_SERVICE_NODE;
+import static com.github.crab2died.retty.context.RettyContextCache.LOCAL_ADDRESS;
+import static com.github.crab2died.retty.context.RettyContextCache.RETTY_SERVICE_CONTEXT;
 
 /**
  * 服务端Context配置
@@ -119,7 +129,8 @@ public class RettyServerContext implements ApplicationContextAware, BeanFactoryP
                     if (service.getClass().isInterface() || faced == null || faced.length != 1) {
                         throw new IllegalStateException(service.getClass().getName());
                     }
-                    RettyContextCache.RETTY_SERVICE_CONTEXT.put(faced[0].getName(), service);
+                    URL url = new URL(faced[0].getName(), protocol.getName(), LOCAL_ADDRESS, service);
+                    RETTY_SERVICE_CONTEXT.put(faced[0].getName(), url);
                 }
             }
 
@@ -143,16 +154,27 @@ public class RettyServerContext implements ApplicationContextAware, BeanFactoryP
         Map<String, Object> annotations = beanFactory.getBeansWithAnnotation(RettyService.class);
 
         for (Map.Entry entry : annotations.entrySet()) {
-            if (void.class == entry.getValue().getClass().getAnnotation(RettyService.class).interfaceClass()) {
+            if (Void.TYPE == entry.getValue().getClass().getAnnotation(RettyService.class).interfaceClass()) {
                 Class<?>[] classes = entry.getValue().getClass().getInterfaces();
                 if (null == classes || classes.length > 1) {
                     throw new IllegalStateException("Unable to confirm the unique interface");
                 }
-                RettyContextCache.RETTY_SERVICE_CONTEXT.put(classes[0].getName(), entry.getValue());
+                URL url = new URL(classes[0].getName(), protocol.getName(), LOCAL_ADDRESS, entry.getValue());
+                RETTY_SERVICE_CONTEXT.put(classes[0].getName(), url);
             } else {
-                Class<?> clazz = entry.getValue().getClass().getAnnotation(RettyService.class).interfaceClass();
-                if (clazz.isInterface()) {
-                    RettyContextCache.RETTY_SERVICE_CONTEXT.put(clazz.getName(), entry.getValue());
+                RettyService annotation = entry.getValue().getClass().getAnnotation(RettyService.class);
+                Class<?>[] classes = entry.getValue().getClass().getInterfaces();
+                if (null == classes || classes.length > 1) {
+                    throw new IllegalStateException("Unable to confirm the unique interface");
+                }
+                Class<?> clazz = classes[0];
+                if (clazz.isInterface() && !clazz.isAnnotation()) {
+                    URL url = new URL(
+                            clazz.getName(), annotation.weight(),
+                            annotation.version(), protocol.getName(),
+                            LOCAL_ADDRESS, entry.getValue()
+                    );
+                    RETTY_SERVICE_CONTEXT.put(clazz.getName(), url);
                 } else {
                     throw new IllegalStateException("RettyService注解value必须为接口的class");
                 }
@@ -160,18 +182,38 @@ public class RettyServerContext implements ApplicationContextAware, BeanFactoryP
         }
         if (logger.isEnabled(InternalLogLevel.INFO)) {
             logger.info("Initialized services:");
-            for (Map.Entry entry : RettyContextCache.RETTY_SERVICE_CONTEXT.entrySet()) {
-                logger.info(entry.getKey() + " => " + entry.getValue());
+            for (Map.Entry entry : RETTY_SERVICE_CONTEXT.entrySet()) {
+                logger.info(entry.getValue().toString());
             }
         }
+
+        // 2) 发布服务至注册中心
+
+        ZkClient zkClient = new ZkClient(registry, 5000, 5000, new ZkClientUtils.MyZkSerializer());
+        zkClient.createPersistent(REGISTRY_SERVICE_NODE, true);
+
+        Set<String> set = new HashSet<>();
+        for (Map.Entry<String, URL> entry : RETTY_SERVICE_CONTEXT.entrySet()) {
+            set.add(entry.getValue().encode());
+        }
+        if (zkClient.exists(REGISTRY_SERVICE_NODE)) {
+            String store = zkClient.readData(REGISTRY_SERVICE_NODE);
+            if (null != store && !"[]".equals(store)) {
+                set.addAll(JSONArray.parseArray(store, String.class));
+            }
+        }
+        if (!set.isEmpty()) {
+            ZkClientUtils.initNode(zkClient, REGISTRY_SERVICE_NODE, set);
+        }
+
+        String str = zkClient.readData(REGISTRY_SERVICE_NODE);
+        System.out.println(str);
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         // spring 加载完成后处理
         // 1) TCP server启动
-
-        // 2) 发布服务至注册中心
 
 
     }

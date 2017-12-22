@@ -19,6 +19,8 @@
     <bean id="protocol" class="com.github.crab2died.retty.context.Protocol">
         <!-- 协议名,默认协议:retty -->
         <constructor-arg name="name" value="retty"/>
+        <!-- 服务IP地址 -->
+        <constructor-arg name="host" value="127.0.0.1"/>
         <!-- 端口号 -->
         <constructor-arg name="port" value="4321"/>
     </bean>

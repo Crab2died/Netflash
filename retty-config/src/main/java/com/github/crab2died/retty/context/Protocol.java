@@ -14,6 +14,11 @@ public class Protocol {
     private String name;
 
     /**
+     * IP
+     */
+    private String host;
+
+    /**
      * 服务端口
      */
     private int port;
@@ -26,12 +31,26 @@ public class Protocol {
         this.port = port;
     }
 
+    public Protocol(String name, String host, int port) {
+        this.name = name;
+        this.host = host;
+        this.port = port;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public int getPort() {
