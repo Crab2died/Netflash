@@ -4,7 +4,7 @@ import io.netty.channel.socket.SocketChannel;
 
 public class ClientUtil {
 
-    private static SocketChannel socketChannel;
+    private volatile static SocketChannel socketChannel;
 
     public static SocketChannel getSocketChannel() {
         return socketChannel;
