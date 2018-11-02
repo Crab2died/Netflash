@@ -20,7 +20,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <springframework.version>4.3.2.RELEASE</springframework.version>
+        <springframework.version>4.3.18.RELEASE</springframework.version>
         <cglib.version>3.2.5</cglib.version>
         <netty.version>4.1.16.Final</netty.version>
         <hessan.version>4.0.38</hessan.version>

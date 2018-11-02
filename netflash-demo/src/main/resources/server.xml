@@ -6,7 +6,7 @@
 
     <!--<context:component-scan base-package="com.github.crab2died"/>-->
 
-    <!--<bean id="springnetflashContextInit" class="com.github.crab2died.netflash.context.SpringnetflashContextInit"/>-->
+    <!--<bean id="springNetflashContextInit" class="com.github.crab2died.netflash.context.SpringNetflashContextInit"/>-->
 
     <bean id="server" class="com.github.crab2died.netflash.rpc.server.NetflashServer">
         <constructor-arg name="serverAddress" value="127.0.0.1:8200"/>
