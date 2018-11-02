@@ -5,17 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.crab2died</groupId>
-    <artifactId>retty</artifactId>
+    <artifactId>netflash</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>retty-common</module>
-        <module>retty-config</module>
-        <module>retty-proxy</module>
-        <module>retty-demo</module>
-        <module>retty-rpc</module>
-        <module>retty-all</module>
-        <module>retty-registry</module>
+        <module>netflash-common</module>
+        <module>netflash-config</module>
+        <module>netflash-proxy</module>
+        <module>netflash-demo</module>
+        <module>netflash-rpc</module>
+        <module>netflash-all</module>
+        <module>netflash-registry</module>
     </modules>
 
     <properties>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--<context:component-scan base-package="com.github.crab2died"/>-->
+
+    <!--<bean id="springnetflashContextInit" class="com.github.crab2died.netflash.context.SpringnetflashContextInit"/>-->
+
+    <bean id="server" class="com.github.crab2died.netflash.rpc.server.NetflashServer">
+        <constructor-arg name="serverAddress" value="127.0.0.1:8200"/>
+    </bean>
+
+    <!-- 协议配置 -->
+    <bean id="protocol" class="com.github.crab2died.netflash.context.Protocol">
+        <!-- 协议名,默认协议:netflash -->
+        <constructor-arg name="name" value="netflash"/>
+        <!-- 服务IP地址 -->
+        <constructor-arg name="host" value="127.0.0.1"/>
+        <!-- 端口号 -->
+        <constructor-arg name="port" value="4321"/>
+    </bean>
+
+    <!-- 业务实现类，可以通过注解@netflashService，然后启动spring注解扫描功能 -->
+    <!--<bean name="demo" class="com.github.crab2died.netflash.demo.service.impl.DemoServiceImpl"/>-->
+
+    <bean id="netflashServerContext" class="com.github.crab2died.netflash.context.NetflashServerContext">
+        <!-- 服务名 -->
+        <property name="name" value="server"/>
+        <!-- 注册中心 -->
+        <property name="registry" value="127.0.0.1:2181"/>
+        <!-- 协议配置 -->
+        <property name="protocol" ref="protocol"/>
+        <!-- 业务服务列表 -->
+        <!--<property name="services">-->
+        <!--<list>-->
+        <!--<ref bean="demo"/>-->
+        <!--</list>-->
+        <!--</property>-->
+        <!-- 扫描包 -->
+        <property name="scanPackage" value="com.github.crab2died.netflash.demo.*"/>
+    </bean>
+
+</beans>
